@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,19 +11,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: const Center(
-          child: Text(
-            '플러터입니다',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.black,
-            ),
-          ),
-        ),
-      ),
+      title: 'MyToDo',
+      home: MainPage(),
     );
   }
 }
