@@ -7,8 +7,55 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFFFFEDE6), 
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
+          // 로고 이미지 (가운데)
+          Image.asset(
+            'assets/logo(short).png',
+            width: 300,
+            height: 300,
+          ),
+          SizedBox(height: 20),// sizedbox : CSS의 margin과 유사
+          Column(
+            children: [
+              Text(
+                '하루하루 해내는 즐거움,\n마이 To-Do',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black,
+                  fontFamily: 'OngleipRyuryu',
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 40),
+          Container(
+            width: 280,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Color(0xFFFF9D8C),
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.pink[200]!,
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                '오늘의 할 일 추가하기',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'OngleipRyuryu',
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

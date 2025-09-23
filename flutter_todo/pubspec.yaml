@@ -22,10 +22,15 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
 
-# The following section is specific to Flutter packages.
+# 추가한 플러터 패키지
 flutter:
   uses-material-design: true
 
   assets:
     - assets/logo(long).png
     - assets/logo(short).png
+
+  fonts:
+    - family: OngleipRyuryu
+      fonts:
+        - asset: assets/fonts/OngleipRyuryu.ttf
