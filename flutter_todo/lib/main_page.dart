@@ -33,7 +33,10 @@ class MainPage extends StatelessWidget {
           GestureDetector(
             onTap: () {
               // 투두 페이지로 이동
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TodoPage()),
+              );
             },
             child: Container(
               width: 280,
