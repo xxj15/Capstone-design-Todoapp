@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'todo_page.dart';
 
 // 메인 페이지는 로고, 텍스트, 버튼만 표시됨 (내용이 고정되어 있음) => StatelessWidget 사용
 class MainPage extends StatelessWidget {
@@ -29,29 +30,34 @@ class MainPage extends StatelessWidget {
           ),
           SizedBox(height: 40),
           
-          // "오늘의 할 일 추가하기" 버튼
-          Container(
-            width: 280,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Color(0xFFFF9D8C),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.pink[200]!,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                '오늘의 할 일 추가하기',
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'OngleipRyuryu',
+          GestureDetector(
+            onTap: () {
+              // 투두 페이지로 이동
+
+            },
+            child: Container(
+              width: 280,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Color(0xFFFF9D8C),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink[200]!,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  '오늘의 할 일 추가하기',
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'OngleipRyuryu',
+                  ),
                 ),
               ),
             ),
@@ -69,7 +75,7 @@ class MainPage extends StatelessWidget {
                   fontFamily: 'OngleipRyuryu',
                 ),
               ),
-              GestureDetector(
+              GestureDetector(// GestureDetector : 클릭 이벤트 처리하는 위젯.
                 onTap: () async {
                   final url = Uri.parse('https://github.com/xxj15');
                   if (await canLaunchUrl(url)) {
