@@ -8,4 +8,17 @@ class TodoProvider extends ChangeNotifier { // ChangeNotifier : Flutter에서 �
 
 
   List<TodoModel> get todos => _todos; // 할 일 목록 가져옴.
+
+  // 기능 1 - 할 일 추가 
+  void addTodo(String text) {
+    if (text.trim().isNotEmpty) {
+      final todo = TodoModel(
+        id: _todos.length.toString(), 
+        text: text.trim(),
+        isCompleted: false,
+      );
+      _todos.add(todo);
+      notifyListeners(); 
+    }
+  }
 }
