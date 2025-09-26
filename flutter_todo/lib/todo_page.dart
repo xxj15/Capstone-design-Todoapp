@@ -38,16 +38,15 @@ class _TodoPageState extends State<TodoPage> {
           
           SizedBox(height: 40),
           
-          // 할 일 목록 (임시)
+          // 할 일 목록
           Expanded(
-            child: Center(
-              child: Text(
-                '할 일 목록이 여기에 표시됩니다',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontFamily: 'OngleipRyuryu',
-                ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  // 할 일 입력 필드
+                  _buildTodoInputField(),
+                ],
               ),
             ),
           ),
@@ -72,6 +71,107 @@ class _TodoPageState extends State<TodoPage> {
           ),
           
           SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+  
+  // 할 일 아이템 위젯 생성
+  Widget _buildTodoItem(String text, bool isCompleted) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      decoration: BoxDecoration(
+        color: Color(0xFFFFEDE6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Color(0xFFE0E0E0),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // 체크박스
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Color(0xFF8B4513),
+                width: 2,
+              ),
+              color: isCompleted ? Color(0xFF8B4513) : Colors.transparent,
+            ),
+            child: isCompleted
+                ? Icon(
+                    Icons.check,
+                    size: 12,
+                    color: Colors.white,
+                  )
+                : null,
+          ),
+          SizedBox(width: 15),
+          
+          // 할 일 텍스트
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 18,
+                color: isCompleted ? Colors.grey[600] : Colors.black,
+                fontFamily: 'OngleipRyuryu',
+                decoration: isCompleted ? TextDecoration.lineThrough : null,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // 할 일 입력 필드 위젯 생성
+  Widget _buildTodoInputField() {
+    return Container(
+      width: 400,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15), // CSS의 padding 역할
+      decoration: BoxDecoration(
+        color: Color(0xFFFFEDE6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Color(0xFFE0E0E0),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // 체크박스 (비활성화)
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey[400]!,
+                width: 2,
+              ),
+              color: Colors.transparent,
+            ),
+          ),
+          SizedBox(width: 15),
+          
+          // 입력 필드 텍스트
+          Expanded(
+            child: Text(
+              '오늘의 할 일을 입력하세요!',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey[600],
+                fontFamily: 'OngleipRyuryu',
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
         ],
       ),
     );
