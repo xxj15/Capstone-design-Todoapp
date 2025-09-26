@@ -1,6 +1,7 @@
 // 투두 페이지
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 // TodoPage : 위젯 자체의 정보를 담음 (설정 등))
 class TodoPage extends StatefulWidget {
@@ -12,17 +13,31 @@ class TodoPage extends StatefulWidget {
 class _TodoPageState extends State<TodoPage> {
   @override
   Widget build(BuildContext context) {
+    // 오늘 날짜를 한국어 형식으로 포맷팅
+    final now = DateTime.now();
+    final formattedDate = DateFormat('MM/dd EEEE', 'ko_KR').format(now);
+    
     return Scaffold(
       backgroundColor: Color(0xFFFFEDE6),
-      body: Center(
-        child: Text(
-          '투두페이지입니다',
-          style: TextStyle(
-            fontSize: 24,
-            color: Colors.black,
-            fontFamily: 'OngleipRyuryu',
+      body: Column(
+        children: [
+          SizedBox(height: 60),
+          
+          // 오늘 날짜 표시
+          Center(
+            child: Text(
+              formattedDate,
+              style: TextStyle(
+                fontSize: 32,
+                color: Color(0xFF8B4513),
+                fontFamily: 'OngleipRyuryu',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        ),
+          
+  
+        ],
       ),
     );
   }
