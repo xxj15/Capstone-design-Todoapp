@@ -11,9 +11,7 @@ class TodoPage extends StatefulWidget {
 
 // _TodoPageState : 실제 UI를 구성하는 메서드를 포함. 실제 동작과 상태를 관리함.
 class _TodoPageState extends State<TodoPage> {
-  final TextEditingController _textController = TextEditingController();
-  final List<String> _todos = [];
-  bool _showInputField = false; 
+  final TextEditingController _textController = TextEditingController(); 
   
   @override
   void dispose() {
@@ -54,19 +52,9 @@ class _TodoPageState extends State<TodoPage> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  // 할 일 목록
-                  ..._todos.map((todo) => Column(
-                    children: [
-                      _buildTodoItem(todo, false),
-                      SizedBox(height: 15),
-                    ],
-                  )).toList(),
                   
-                  // 할 일 입력 필드 (조건부 표시)
-                  if (_showInputField) ...[
-                    _buildTodoInputField(),
-                    SizedBox(height: 15),
-                  ],
+                  // 할 일 입력 필드 (임시로 항상 표시)
+                  _buildTodoInputField(),
                 ],
               ),
             ),
@@ -76,13 +64,7 @@ class _TodoPageState extends State<TodoPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-                if (_showInputField) {
-                  _addTodo();
-                } else {
-                  setState(() {
-                    _showInputField = true;
-                  });
-                }
+                print('+ 버튼 클릭');
               },
               child: Text(
                 '+',
@@ -209,24 +191,13 @@ class _TodoPageState extends State<TodoPage> {
                 fontFamily: 'OngleipRyuryu',
               ),
               onSubmitted: (value) { // 엔터키 입력시 실행
-                _addTodo();
+                // 임시로 아무 동작 없음 (나중에 Provider로 이동)
+                print('엔터키 입력: $value');
               },
             ),
           ),
         ],
       ),
     );
-  }
-  
-  // 할 일 추가 메서드
-  void _addTodo() {
-    final text = _textController.text.trim();
-    if (text.isNotEmpty) {
-      setState(() {
-        _todos.add(text);
-        _textController.clear();
-        _showInputField = false; // 입력 필드 숨기기
-      });
-    }
   }
 }
