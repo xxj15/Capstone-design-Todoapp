@@ -11,7 +11,8 @@ class TodoPage extends StatefulWidget {
 
 // _TodoPageState : 실제 UI를 구성하는 메서드를 포함. 실제 동작과 상태를 관리함.
 class _TodoPageState extends State<TodoPage> {
-  final TextEditingController _textController = TextEditingController(); 
+  final TextEditingController _textController = TextEditingController();
+  bool _isInputFocused = false; // 입력 필드 포커스 상태 
   
   @override
   void dispose() {
@@ -146,7 +147,7 @@ class _TodoPageState extends State<TodoPage> {
       height: 60,
       padding: EdgeInsets.symmetric(horizontal: 20), // CSS의 padding 역할
       decoration: BoxDecoration(
-        color: Color(0xFFFF9D8C),
+        color: _isInputFocused ? Color(0xFFFF9D8C) : Color(0xFFFFEDE6),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Color(0xFFE0E0E0),
@@ -174,6 +175,11 @@ class _TodoPageState extends State<TodoPage> {
           Expanded(
             child: TextField(
               controller: _textController,
+              onTap: () {
+                setState(() {
+                  _isInputFocused = true;
+                });
+              },
               decoration: InputDecoration(
                 hintText: '오늘의 할 일을 입력하세요!', // placeholder
                 hintStyle: TextStyle(
@@ -191,8 +197,7 @@ class _TodoPageState extends State<TodoPage> {
                 fontFamily: 'OngleipRyuryu',
               ),
               onSubmitted: (value) { // 엔터키 입력시 실행
-                // 임시로 아무 동작 없음 (나중에 Provider로 이동)
-                print('엔터키 입력: $value');
+
               },
             ),
           ),
