@@ -12,7 +12,8 @@ class TodoPage extends StatefulWidget {
 // _TodoPageState : 실제 UI를 구성하는 메서드를 포함. 실제 동작과 상태를 관리함.
 class _TodoPageState extends State<TodoPage> {
   final TextEditingController _textController = TextEditingController();
-  bool _isInputFocused = false; // 입력 필드 포커스 상태 
+  bool _isInputFocused = false; // 입력 필드 포커스 
+  bool _isCheckboxFilled = false; // 체크박스 채움 
   
   @override
   void dispose() {
@@ -166,7 +167,7 @@ class _TodoPageState extends State<TodoPage> {
                 color: Colors.grey[400]!,
                 width: 2,
               ),
-              color: Colors.transparent,
+              color: _isCheckboxFilled ? Colors.grey[400] : Colors.transparent,
             ),
           ),
           SizedBox(width: 15),
@@ -197,7 +198,11 @@ class _TodoPageState extends State<TodoPage> {
                 fontFamily: 'OngleipRyuryu',
               ),
               onSubmitted: (value) { // 엔터키 입력시 실행
-
+                if (value.trim().isNotEmpty) {
+                  setState(() {
+                    _isCheckboxFilled = true;
+                  });
+                }
               },
             ),
           ),
