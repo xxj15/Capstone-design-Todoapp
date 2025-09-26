@@ -13,6 +13,7 @@ class TodoPage extends StatefulWidget {
 class _TodoPageState extends State<TodoPage> {
   final TextEditingController _textController = TextEditingController();
   final List<String> _todos = [];
+  bool _showInputField = false; 
   
   @override
   void dispose() {
@@ -61,8 +62,11 @@ class _TodoPageState extends State<TodoPage> {
                     ],
                   )).toList(),
                   
-                  // 할 일 입력 필드
-                  _buildTodoInputField(),
+                  // 할 일 입력 필드 (조건부 표시)
+                  if (_showInputField) ...[
+                    _buildTodoInputField(),
+                    SizedBox(height: 15),
+                  ],
                 ],
               ),
             ),
@@ -72,7 +76,13 @@ class _TodoPageState extends State<TodoPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-                _addTodo(); 
+                if (_showInputField) {
+                  _addTodo();
+                } else {
+                  setState(() {
+                    _showInputField = true;
+                  });
+                }
               },
               child: Text(
                 '+',
@@ -215,6 +225,7 @@ class _TodoPageState extends State<TodoPage> {
       setState(() {
         _todos.add(text);
         _textController.clear();
+        _showInputField = false; // 입력 필드 숨기기
       });
     }
   }
