@@ -11,6 +11,15 @@ class TodoPage extends StatefulWidget {
 
 // _TodoPageState : 실제 UI를 구성하는 메서드를 포함. 실제 동작과 상태를 관리함.
 class _TodoPageState extends State<TodoPage> {
+  final TextEditingController _textController = TextEditingController();
+  final List<String> _todos = [];
+  
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     // 오늘 날짜
@@ -44,6 +53,14 @@ class _TodoPageState extends State<TodoPage> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
+                  // 할 일 목록
+                  ..._todos.map((todo) => Column(
+                    children: [
+                      _buildTodoItem(todo, false),
+                      SizedBox(height: 15),
+                    ],
+                  )).toList(),
+                  
                   // 할 일 입력 필드
                   _buildTodoInputField(),
                 ],
@@ -55,8 +72,7 @@ class _TodoPageState extends State<TodoPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-                // 할 일 추가 기능
-                print('할 일 추가 버튼 클릭');
+                _addTodo(); 
               },
               child: Text(
                 '+',
@@ -79,10 +95,11 @@ class _TodoPageState extends State<TodoPage> {
   // 할 일 아이템 위젯 생성
   Widget _buildTodoItem(String text, bool isCompleted) {
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      width: 400,
+      height: 60,
+      padding: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Color(0xFFFFEDE6),
+        color: Color(0xFFFF9D8C),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Color(0xFFE0E0E0),
@@ -118,7 +135,7 @@ class _TodoPageState extends State<TodoPage> {
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 color: isCompleted ? Colors.grey[600] : Colors.black,
                 fontFamily: 'OngleipRyuryu',
                 decoration: isCompleted ? TextDecoration.lineThrough : null,
@@ -134,9 +151,10 @@ class _TodoPageState extends State<TodoPage> {
   Widget _buildTodoInputField() {
     return Container(
       width: 400,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15), // CSS의 padding 역할
+      height: 60,
+      padding: EdgeInsets.symmetric(horizontal: 20), // CSS의 padding 역할
       decoration: BoxDecoration(
-        color: Color(0xFFFFEDE6),
+        color: Color(0xFFFF9D8C),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Color(0xFFE0E0E0),
@@ -160,20 +178,44 @@ class _TodoPageState extends State<TodoPage> {
           ),
           SizedBox(width: 15),
           
-          // 입력 필드 텍스트
+          // 실제 입력 필드
           Expanded(
-            child: Text(
-              '오늘의 할 일을 입력하세요!',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey[600],
-                fontFamily: 'OngleipRyuryu',
-                fontStyle: FontStyle.italic,
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: '오늘의 할 일을 입력하세요!', // placeholder
+                hintStyle: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey[600],
+                  fontFamily: 'OngleipRyuryu',
+                  fontStyle: FontStyle.italic,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
               ),
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontFamily: 'OngleipRyuryu',
+              ),
+              onSubmitted: (value) { // 엔터키 입력시 실행
+                _addTodo();
+              },
             ),
           ),
         ],
       ),
     );
+  }
+  
+  // 할 일 추가 메서드
+  void _addTodo() {
+    final text = _textController.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        _todos.add(text);
+        _textController.clear();
+      });
+    }
   }
 }
