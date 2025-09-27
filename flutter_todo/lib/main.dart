@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart'; // 로케일 데이터  초기화 를 위해 필요
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'main_page.dart';
-import 'todo_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -15,12 +14,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => TodoProvider(),
-      child: MaterialApp(
-        title: 'MyToDo',
-        home: MainPage(),
-      ),
+    return MaterialApp(
+      title: 'MyToDo',
+      home: MainPage(),
     );
   }
 }

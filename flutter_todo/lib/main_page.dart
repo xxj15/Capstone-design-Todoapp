@@ -10,9 +10,7 @@ class MainPage extends StatelessWidget {
       backgroundColor: Color(0xFFFFEDE6),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 로고 이미지 (가운데)
-          Image.asset(
+        children: [          Image.asset(
             'assets/logo(short).png',
             width: 250,
             height: 250,

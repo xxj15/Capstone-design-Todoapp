@@ -2,18 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'todo_provider.dart';
 import 'todo_model.dart';
 
 // TodoPage : 위젯 자체의 정보를 담음 (설정 등))
-class TodoPage extends StatefulWidget {
+class TodoPage extends ConsumerStatefulWidget {
   @override
-  State<TodoPage> createState() => _TodoPageState();
+  ConsumerState<TodoPage> createState() => _TodoPageState();
 }
 
 // _TodoPageState : 실제 UI를 구성하는 메서드를 포함 (실제 동작과 상태를 관리함)
-class _TodoPageState extends State<TodoPage> {
+class _TodoPageState extends ConsumerState<TodoPage> {
   final TextEditingController _textController = TextEditingController();
   bool _isInputFocused = false; 
   int _checkboxState = 0; // 체크박스 상태: 0=투명, 1=회색, 2=체크
@@ -65,12 +65,13 @@ class _TodoPageState extends State<TodoPage> {
                   
                   // 할 일 목록 표시
                   Expanded(
-                    child: Consumer<TodoProvider>(
-                      builder: (context, todoProvider, child) {
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final todos = ref.watch(todoProvider);
                         return ListView.builder(
-                          itemCount: todoProvider.todos.length,
+                          itemCount: todos.length,
                           itemBuilder: (context, index) {
-                            final todo = todoProvider.todos[index];
+                            final todo = todos[index];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 10),
                               child: Center(
@@ -95,7 +96,7 @@ class _TodoPageState extends State<TodoPage> {
                 if (text.isNotEmpty) {
                   // 체크 상태와 함께 할 일 추가
                   final isChecked = _checkboxState == 1;
-                  context.read<TodoProvider>().addTodoWithStatus(text, isChecked);
+                  ref.read(todoProvider.notifier).addTodoWithStatus(text, isChecked);
                   _textController.clear();
                   setState(() {
                     _checkboxState = 0; // 체크 상태 초기화
@@ -183,7 +184,7 @@ class _TodoPageState extends State<TodoPage> {
           // 삭제 버튼
           GestureDetector(
             onTap: () {
-              context.read<TodoProvider>().deleteTodo(todo.id);
+              ref.read(todoProvider.notifier).deleteTodo(todo.id);
             },
             child: Text(
               '×',
