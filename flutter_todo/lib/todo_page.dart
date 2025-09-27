@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'todo_provider.dart';
+import 'todo_model.dart';
 
 // TodoPage : 위젯 자체의 정보를 담음 (설정 등))
 class TodoPage extends StatefulWidget {
@@ -14,6 +17,7 @@ class _TodoPageState extends State<TodoPage> {
   final TextEditingController _textController = TextEditingController();
   bool _isInputFocused = false; 
   int _checkboxState = 0; // 체크박스 상태: 0=투명, 1=회색, 2=체크
+  Map<String, bool> _todoStates = {}; // 각 할 일의 체크 상태를 로컬로 관리
   
   @override
   void dispose() {
@@ -54,9 +58,30 @@ class _TodoPageState extends State<TodoPage> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  
-                  // 할 일 입력 필드 (임시로 항상 표시)
+                  // 할 일 입력 필드
                   _buildTodoInputField(),
+                  
+                  SizedBox(height: 20),
+                  
+                  // 할 일 목록 표시
+                  Expanded(
+                    child: Consumer<TodoProvider>(
+                      builder: (context, todoProvider, child) {
+                        return ListView.builder(
+                          itemCount: todoProvider.todos.length,
+                          itemBuilder: (context, index) {
+                            final todo = todoProvider.todos[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Center(
+                                child: _buildTodoItem(todo),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -66,7 +91,15 @@ class _TodoPageState extends State<TodoPage> {
           Center(
             child: GestureDetector(
               onTap: () {
-                print('+ 버튼 클릭');
+                final text = _textController.text.trim();
+                if (text.isNotEmpty) {
+                  context.read<TodoProvider>().addTodo(text);
+                  _textController.clear();
+                  setState(() {
+                    _checkboxState = 0;
+                    _isInputFocused = false;
+                  });
+                }
               },
               child: Text(
                 '+',
@@ -87,7 +120,7 @@ class _TodoPageState extends State<TodoPage> {
   }
   
   // 할 일 아이템 위젯 생성
-  Widget _buildTodoItem(String text, bool isCompleted) {
+  Widget _buildTodoItem(TodoModel todo) {
     return Container(
       width: 400,
       height: 60,
@@ -103,68 +136,63 @@ class _TodoPageState extends State<TodoPage> {
       child: Row(
         children: [
           // 체크박스
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Color(0xFF8B4513),
-                width: 2,
-              ),
-              color: isCompleted ? Color(0xFF8B4513) : Colors.transparent,
-            ),
-            child: isCompleted
-                ? Icon(
-                    Icons.check,
-                    size: 12,
-                    color: Colors.white,
-                  )
-                : null,
-          ),
-          SizedBox(width: 15),
-          
-          // 할 일 텍스트
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 20,
-                color: isCompleted ? Colors.grey[600] : Colors.black,
-                fontFamily: 'OngleipRyuryu',
-                decoration: isCompleted ? TextDecoration.lineThrough : null,
-              ),
-            ),
-          ),
-          
-          // X 버튼 (항상 표시)
-          SizedBox(width: 10),
           GestureDetector(
             onTap: () {
               setState(() {
-                _checkboxState = 0; // 상태 초기화
-                _textController.clear(); // 텍스트 초기화
+                // 로컬 상태로 간단하게 토글
+                _todoStates[todo.id] = !(_todoStates[todo.id] ?? todo.isCompleted);
               });
             },
             child: Container(
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.grey[400],
                 shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '×',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                border: Border.all(
+                  color: Colors.grey[400]!,
+                  width: 2,
                 ),
+                color: (_todoStates[todo.id] ?? todo.isCompleted) ? Color(0xFF8B4513) : Colors.transparent,
+              ),
+              child: (_todoStates[todo.id] ?? todo.isCompleted)
+                  ? Icon(
+                      Icons.check,
+                      size: 12,
+                      color: Colors.white,
+                    )
+                  : null,
+            ),
+          ),
+          SizedBox(width: 15),
+          
+          // 할 일 텍스트
+          Expanded(
+            child: Text(
+              todo.text,
+              style: TextStyle(
+                fontSize: 20,
+                color: (_todoStates[todo.id] ?? todo.isCompleted) ? Colors.grey[600] : Colors.black,
+                fontFamily: 'OngleipRyuryu',
+                decoration: (_todoStates[todo.id] ?? todo.isCompleted) ? TextDecoration.lineThrough : null,
               ),
             ),
           ),
+          
+          // 삭제 버튼
+          GestureDetector(
+            onTap: () {
+              context.read<TodoProvider>().deleteTodo(todo.id);
+            },
+            child: Text(
+              '×',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          
         ],
       ),
     );
@@ -190,11 +218,8 @@ class _TodoPageState extends State<TodoPage> {
           GestureDetector(
             onTap: () {
               setState(() {
-                if (_checkboxState == 1) {
-                  _checkboxState = 2; // 회색 → 체크
-                } else if (_checkboxState == 2) {
-                  _checkboxState = 1; // 체크 → 회색
-                }
+                // 할 일 아이템과 동일하게 토글
+                _checkboxState = _checkboxState == 0 ? 1 : 0;
               });
             },
             child: Container(
@@ -206,15 +231,13 @@ class _TodoPageState extends State<TodoPage> {
                   color: Colors.grey[400]!,
                   width: 2,
                 ),
-                color: _checkboxState == 0 ? Colors.transparent : Colors.grey[400],
+                color: _checkboxState == 1 ? Color(0xFF8B4513) : Colors.transparent,
               ),
-              child: _checkboxState == 2
-                  ? Center(
-                      child: Icon(
-                        Icons.check,
-                        size: 12,
-                        color: Colors.white,
-                      ),
+              child: _checkboxState == 1
+                  ? Icon(
+                      Icons.check,
+                      size: 12,
+                      color: Colors.white,
                     )
                   : null,
             ),
@@ -243,20 +266,15 @@ class _TodoPageState extends State<TodoPage> {
               ),
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.black,
+                color: _checkboxState == 1 ? Colors.grey[600] : Colors.black,
                 fontFamily: 'OngleipRyuryu',
+                decoration: _checkboxState == 1 ? TextDecoration.lineThrough : null,
               ),
               onSubmitted: (value) { 
-                if (value.trim().isNotEmpty && _checkboxState == 0) {
-                  setState(() {
-                    _checkboxState = 1; // 투명 → 회색
-                  });
-                }
               },
             ),
           ),
-          
-          // 삭제하기 기능
+          // 삭제 버튼
           SizedBox(width: 10),
           GestureDetector(
             onTap: () {

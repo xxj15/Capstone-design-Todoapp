@@ -21,4 +21,24 @@ class TodoProvider extends ChangeNotifier { // ChangeNotifier : Flutter에서 �
       notifyListeners(); 
     }
   }
+
+  // 기능 2 - 할 일 삭제
+  void deleteTodo(String id) {
+    _todos.removeWhere((todo) => todo.id == id);
+    notifyListeners();
+  }
+
+  // 기능 3 - 할 일 완료 상태 토글
+  void toggleTodo(String id) {
+    final todoIndex = _todos.indexWhere((todo) => todo.id == id);
+    if (todoIndex != -1) {
+      final currentTodo = _todos[todoIndex];
+      _todos[todoIndex] = TodoModel(
+        id: currentTodo.id,
+        text: currentTodo.text,
+        isCompleted: !currentTodo.isCompleted,
+      );
+      notifyListeners();
+    }
+  }
 }
