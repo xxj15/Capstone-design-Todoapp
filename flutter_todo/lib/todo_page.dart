@@ -9,11 +9,11 @@ class TodoPage extends StatefulWidget {
   State<TodoPage> createState() => _TodoPageState();
 }
 
-// _TodoPageState : 실제 UI를 구성하는 메서드를 포함. 실제 동작과 상태를 관리함.
+// _TodoPageState : 실제 UI를 구성하는 메서드를 포함 (실제 동작과 상태를 관리함)
 class _TodoPageState extends State<TodoPage> {
   final TextEditingController _textController = TextEditingController();
-  bool _isInputFocused = false; // 입력 필드 포커스 
-  bool _isCheckboxFilled = false; // 체크박스 채움 
+  bool _isInputFocused = false; 
+  int _checkboxState = 0; // 체크박스 상태: 0=투명, 1=회색, 2=체크
   
   @override
   void dispose() {
@@ -136,6 +136,35 @@ class _TodoPageState extends State<TodoPage> {
               ),
             ),
           ),
+          
+          // X 버튼 (항상 표시)
+          SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _checkboxState = 0; // 상태 초기화
+                _textController.clear(); // 텍스트 초기화
+              });
+            },
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  '×',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -157,17 +186,37 @@ class _TodoPageState extends State<TodoPage> {
       ),
       child: Row(
         children: [
-          // 체크박스 (비활성화)
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.grey[400]!,
-                width: 2,
+          // 체크박스 (클릭 가능)
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (_checkboxState == 1) {
+                  _checkboxState = 2; // 회색 → 체크
+                } else if (_checkboxState == 2) {
+                  _checkboxState = 1; // 체크 → 회색
+                }
+              });
+            },
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.grey[400]!,
+                  width: 2,
+                ),
+                color: _checkboxState == 0 ? Colors.transparent : Colors.grey[400],
               ),
-              color: _isCheckboxFilled ? Colors.grey[400] : Colors.transparent,
+              child: _checkboxState == 2
+                  ? Center(
+                      child: Icon(
+                        Icons.check,
+                        size: 12,
+                        color: Colors.white,
+                      ),
+                    )
+                  : null,
             ),
           ),
           SizedBox(width: 15),
@@ -197,13 +246,32 @@ class _TodoPageState extends State<TodoPage> {
                 color: Colors.black,
                 fontFamily: 'OngleipRyuryu',
               ),
-              onSubmitted: (value) { // 엔터키 입력시 실행
-                if (value.trim().isNotEmpty) {
+              onSubmitted: (value) { 
+                if (value.trim().isNotEmpty && _checkboxState == 0) {
                   setState(() {
-                    _isCheckboxFilled = true;
+                    _checkboxState = 1; // 투명 → 회색
                   });
                 }
               },
+            ),
+          ),
+          
+          // 삭제하기 기능
+          SizedBox(width: 10),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _checkboxState = 0; // 상태 초기화
+                _textController.clear(); // 텍스트 초기화
+              });
+            },
+            child: Text(
+              '×',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
