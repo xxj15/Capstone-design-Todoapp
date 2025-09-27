@@ -22,6 +22,19 @@ class TodoProvider extends ChangeNotifier { // ChangeNotifier : Flutter에서 �
     }
   }
 
+  // 기능 1-2 - 체크 상태와 함께 할 일 추가
+  void addTodoWithStatus(String text, bool isCompleted) {
+    if (text.trim().isNotEmpty) {
+      final todo = TodoModel(
+        id: _todos.length.toString(), 
+        text: text.trim(),
+        isCompleted: isCompleted,
+      );
+      _todos.add(todo);
+      notifyListeners(); 
+    }
+  }
+
   // 기능 2 - 할 일 삭제
   void deleteTodo(String id) {
     _todos.removeWhere((todo) => todo.id == id);

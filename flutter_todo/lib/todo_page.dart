@@ -93,10 +93,12 @@ class _TodoPageState extends State<TodoPage> {
               onTap: () {
                 final text = _textController.text.trim();
                 if (text.isNotEmpty) {
-                  context.read<TodoProvider>().addTodo(text);
+                  // 체크 상태와 함께 할 일 추가
+                  final isChecked = _checkboxState == 1;
+                  context.read<TodoProvider>().addTodoWithStatus(text, isChecked);
                   _textController.clear();
                   setState(() {
-                    _checkboxState = 0;
+                    _checkboxState = 0; // 체크 상태 초기화
                     _isInputFocused = false;
                   });
                 }
