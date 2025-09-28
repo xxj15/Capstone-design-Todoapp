@@ -2,8 +2,6 @@
 
 **CSE4103-01 커넥티드 플랫폼 이론과 실제(캡스톤 디자인)**
 
-20200271 안서진
-
 ### 1. 피그마 디자인
 
 <img src="readme_assets/todo_figma.png" width="400" alt="투두 앱 디자인">
